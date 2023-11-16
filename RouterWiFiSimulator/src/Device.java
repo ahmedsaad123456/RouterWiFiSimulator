@@ -1,34 +1,26 @@
 class Device extends Thread {
-    private static int nextConnectionID = 1;
-    private final String deviceName;
-    private final Router router;
-    private int connectionID;
+    public String name;
+    public String type;
+    public int connectionID;
+    public Router router;
 
-    public Device(String name, Router router) {
-        this.deviceName = name;
+    public Device(String name, String type, Router router) {
+        this.name = name;
+        this.type = type;
         this.router = router;
-        this.connectionID = -1; // No connection initially
-    }
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    public int getConnectionID() {
-        return connectionID;
+        connectionID = 1;
     }
 
     @Override
     public void run() {
         try {
-            router.connect(this);
-            router.performOnlineActivity(this);
-            router.disconnect(this);
+            router.arrived(this);
+            System.out.println("Connection " + connectionID + ": " + name + " Occupied");
+            System.out.println("Connection " + connectionID + ": " + name + " login");
+            Thread.sleep(2000);
+            router.left(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    synchronized void assignConnectionID() {
-        connectionID = nextConnectionID++;
     }
 }
