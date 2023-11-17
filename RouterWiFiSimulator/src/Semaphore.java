@@ -13,9 +13,11 @@ public class Semaphore {
      *
      */
     public synchronized void P() {
-        value-- ;
-        if (value < 0)
+        // while to make the thread to recheck the condition when it wakes up
+        while (value <= 0)
             try { wait() ; } catch( InterruptedException e ) { }
+        value-- ;
+
     }
 
 
@@ -32,6 +34,6 @@ public class Semaphore {
      */
     public synchronized void V() {
         value++ ;
-        if (value <= 0) notify() ;
+        notify() ;
     }
 }
