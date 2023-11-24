@@ -12,7 +12,7 @@ public class Semaphore {
      * this method for the given instance of "Semaphore"
      *
      */
-    public synchronized void P() {
+    public synchronized void acquire() {
         // while to make the thread to recheck the condition when it wakes up
         while (value <= 0)
             try { wait() ; } catch( InterruptedException e ) { }
@@ -32,7 +32,7 @@ public class Semaphore {
      * this method for the given instance of "Semaphore"
      *
      */
-    public synchronized void V() {
+    public synchronized void release() {
         value++ ;
         notify() ;
     }

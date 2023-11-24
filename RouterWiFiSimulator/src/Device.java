@@ -4,6 +4,13 @@ class Device extends Thread {
     private int connectionID;
     private Router router;
 
+
+    public Device(String name  , String t , Router r){
+        deviceName = name;
+        type = t ;
+        router = r;
+    }
+
     public String getDeviceName(){
         return deviceName;
     }
@@ -13,17 +20,18 @@ class Device extends Thread {
     public int getConnectionID(){
         return connectionID;
     }
+
+    public void setConnectionID(int connectionID) {
+        this.connectionID = connectionID;
+    }
+
     public Router getRouter(){
         return router;
     }
     public void run(){
-       router.arrived(this);
-       router.semaphore.wait(this);
-       connectionID = router.connect(this);
-       System.out.println("Connection " + connectionID + ": " + deviceName + " Occupied");
-       performOnlineActivity();
-       router.disconnect(this);
-       router.semaphore.signal();
+        router.connect(this);
+        performOnlineActivity();
+        router.disconnect(this);
     }
     public void performOnlineActivity(){
         try{

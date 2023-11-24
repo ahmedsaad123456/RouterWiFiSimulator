@@ -1,43 +1,49 @@
-import java.util.concurrent.Semaphore;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Router {
     protected Semaphore semaphore;
-    private int nextConnectionID;
 
-    public Router() {
-        semaphore = new Semaphore(1); // Initialize with a permit for the router itself
-        nextConnectionID = 1; // Start connection IDs from 1
+    private Queue<Integer> availableConnections;
+
+
+    // 3
+
+    public Router(int maxConnections) {
+        semaphore = new Semaphore(maxConnections); // Initialize with a permit for the router itself
+        availableConnections = new LinkedList<>();
+        for(int i = 1 ; i<=maxConnections ; i++){
+            availableConnections.add(i);
+        }
+
     }
 
-    public void arrived(Device device) {
-        System.out.println('(' + device.getDeviceName() + ')' + '(' + device.getType() + ')' + " arrived");
-    }
 
+    public void connect(Device device) {
 
-    public int connect(Device device) {
-        int connectionID = getNextConnectionID();
+        synchronized (this) {
+            if (availableConnections.size() == 0) {
+                System.out.println(device.getDeviceName() + " (" + device.getType() + ")" + " arrived and waiting");
+            }
+            else{
+                System.out.println(device.getDeviceName() + " (" + device.getType() + ")" + " arrived");
+            }
+
+        }
+        semaphore.acquire();
+
+        int connectionID = availableConnections.poll();
+        device.setConnectionID(connectionID);
+        System.out.println("Connection " + connectionID + ": " + device.getDeviceName() + " Occupied");
         System.out.println("Connection " + connectionID + ": " + device.getDeviceName() + " login");
-        return connectionID;
     }
 
     public void disconnect(Device device) {
+        System.out.println("Connection " + device.getConnectionID() + ": " + device.getDeviceName() + " logout");
         int connectionID = device.getConnectionID();
-        System.out.println("Connection " + connectionID + ": " + device.getDeviceName() + " logout");
+        availableConnections.add(connectionID);
+        semaphore.release();
     }
 
-    private synchronized int getNextConnectionID() {
-        return nextConnectionID++;
-    }
 
-//
-//    public void setNextConnectionID(int nextConnectionID) {
-//        this.nextConnectionID = nextConnectionID;
-//    }
-//
-//    public void setSemaphore(Semaphore semaphore) {
-//        this.semaphore = semaphore;
-//    }
-//    public Semaphore getSemaphore() {
-//        return semaphore;
-//    }
 }
