@@ -3,6 +3,8 @@ public class Semaphore {
     public Semaphore() { value = 0 ; }
     public Semaphore(int initial) { value = initial ; }
 
+    //=================================================================================================================
+
     /**
      * responsible for acquiring a permit,
      * and if no permit is available (value becomes negative),
@@ -20,6 +22,9 @@ public class Semaphore {
 
     }
 
+    //=================================================================================================================
+
+
 
     /**
      *
@@ -36,4 +41,7 @@ public class Semaphore {
         value++ ;
         notify() ;
     }
+
+    //=================================================================================================================
+
 }
